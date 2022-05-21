@@ -36,9 +36,9 @@
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            const list = document.createElemetnt("li");
-            list.innerText = data.description;
-            document.getElementById("todo").appendChild(list);
+            const listItems = document.createElement('li');
+            listItems.innerHTML = data.description;
+            document.getElementById("todo").appendChild(listItems);
             document.getElementById("error").className = "hidden";
           })
           .catch((error) => {
