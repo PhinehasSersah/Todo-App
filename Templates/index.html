@@ -1,22 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Todo App</title>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="error" class="hidden">Something went wrong. Please try again</div>
     <div>
-        <form action="/todos/create" method="post">
-            <input type="text" value="" name="description">
-            <input type="submit" value="Create" >
-        </form>
+      <form id="formElement" onsubmit="submitForm">
+        <input id="input-body" type="text" value="" name="description" />
+        <input type="submit" value="Create" />
+      </form>
     </div>
-     <ul>
-         {% for item in data %}
-         <li>{{item.description}}</li>
-         {% endfor %}
-     </ul>
-</body>
+    <ul id="todo">
+      {% for item in data %}
+      <li>{{item.description}}</li>
+      {% endfor %}
+    </ul>
+
+    <script>
+      const submitForm = (e) => {
+        e.preventDefault();
+        const inputBody = document.getElementById("input-body");
+        fetch("/todos/create", {
+          method: "POST",
+          body: JSON.stringify({
+            description: inputBody.value,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            const list = document.createElemetnt("li");
+            list.innerText = data.description;
+            document.getElementById("todo").appendChild(list);
+            document.getElementById("error").className = "hidden";
+          })
+          .catch((error) => {
+            document.getElementById("error").className = "";
+          });
+        console.log(inputBody.value);
+        inputBody.value = "";
+      };
+
+      const form = document.getElementById("formElement");
+      form.addEventListener("submit", submitForm);
+    </script>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </body>
 </html>
