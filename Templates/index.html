@@ -26,12 +26,29 @@
           checked
           {%endif%}
         />{{item.description}}
+        <button class="delete" data-id="{{item.id}}">&cross;</button>
       </li>
-
       {% endfor %}
     </ul>
 
     <script>
+      //Deleting todo item function
+      const button = document.querySelectorAll(".delete");
+      const handleDelete = (event) => {
+        const id = event.target.dataset.id;
+        console.log(id);
+        alert('Are you sure you want to delete this item?');
+        fetch("/todos/" + id + "/delete", {
+          method: "DELETE"
+        }).catch((error) => {
+          console.log(error);
+        });
+      };
+
+      button.forEach((button) =>
+        button.addEventListener("click", handleDelete)
+      );
+
       // Updating todo items to completed function
       const checkedItems = document.querySelectorAll(".checkbox-item");
 
@@ -63,7 +80,7 @@
 
       // Entering todo items function
       const submitForm = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         const inputBody = document.getElementById("input-body");
         fetch("/todos/create", {
           method: "POST",
