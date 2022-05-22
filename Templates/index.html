@@ -16,11 +16,52 @@
     </div>
     <ul id="todo">
       {% for item in data %}
-      <li>{{item.description}}</li>
+      <li>
+        <input
+          data-id="{{item.id}}"
+          class="checkbox-item"
+          type="checkbox"
+          {%if
+          item.completed%}
+          checked
+          {%endif%}
+        />{{item.description}}
+      </li>
+
       {% endfor %}
     </ul>
 
     <script>
+      // Updating todo items to completed function
+      const checkedItems = document.querySelectorAll(".checkbox-item");
+
+      const handleCheck = (event) => {
+        let newCompleted = event.target.checked;
+        let todoId = event.target.dataset.id;
+        console.log(newCompleted);
+        fetch("/todos/" + todoId + "/item-completed", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            completed: newCompleted,
+          }),
+        })
+          .then(() => {
+            document.getElementById("error").className = "hidden";
+          })
+          .catch((error) => {
+            document.getElementById("error").className = "";
+            console.log(error);
+          });
+      };
+
+      checkedItems.forEach((item) => {
+        item.addEventListener("change", handleCheck);
+      });
+
+      // Entering todo items function
       const submitForm = (e) => {
         e.preventDefault();
         const inputBody = document.getElementById("input-body");
@@ -36,7 +77,7 @@
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            const listItems = document.createElement('li');
+            const listItems = document.createElement("li");
             listItems.innerHTML = data.description;
             document.getElementById("todo").appendChild(listItems);
             document.getElementById("error").className = "hidden";
@@ -54,6 +95,17 @@
     <style>
       .hidden {
         display: none;
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 40vw;
+        margin: 0 auto;
+        border: 2px solid black;
+        background: grey;
       }
     </style>
   </body>
