@@ -21,7 +21,7 @@ def upgrade():
     op.drop_table('accounts')
     op.drop_table('people')
     op.add_column('todoLists', sa.Column('name', sa.String(), nullable=False))
-    op.add_column('todos', sa.Column('list_id', sa.Integer(), nullable=False))
+    op.add_column('todos', sa.Column('list_id', sa.Integer(), nullable=True))
     op.create_foreign_key(None, 'todos', 'todoLists', ['list_id'], ['id'])
     # ### end Alembic commands ###
 
